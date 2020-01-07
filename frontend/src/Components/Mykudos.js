@@ -1,36 +1,52 @@
 import React from "react";
+import { getToken } from '../utils'
 
-const Mykudos = props => (
-  <div class="col-xs-6">
-	<h2 class="sub-header">Subtitle</h2>
-	  <div class="table-responsive">
-	            <table class="table table-striped">
+class Mykudos extends React.Component {
+	constructor() {
+		super();
+		this.state = {
+			kudoList: []
+		}
+	}
+	componentDidMount() {
+      fetch('http://localhost:8000/api/kudo/', {
+         method: 'get',
+         headers: {
+           'Content-Type':'application/json',
+           'Authorization': getToken(),
+         }
+      }).then(response => response.json())
+      .then(json => {
+          console.log(json)
+          this.setState({
+            kudoList: json
+          })
+      });
+    }
+	render() {
+		return (
+			<div className="col-xs-6">
+			<h2 className="sub-header">Recieved Kudo</h2>
+			  <div className="table-responsive">
+	            <table className="table table-striped">
 	              <thead>
 	                <tr>
-	                  <th class="col-md-1">#</th>
-	                  <th class="col-md-2">Header</th>
-	                  <th class="col-md-3">Header</th>
+	                  <th className="col-md-2">Header</th>
+	                  <th className="col-md-2">Message</th>
 	                </tr>
 	              </thead>
 	              <tbody>
-	                <tr>
-	                  <td class="col-md-1">1,001</td>
-	                  <td class="col-md-2">1,001</td>
-	                  <td class="col-md-3">1,001</td>
-	                </tr>
-	                <tr>
-	                  <td class="col-md-1">1,001</td>
-	                  <td class="col-md-2">1,001</td>
-	                  <td class="col-md-3">1,001</td>
-	                </tr>
-	                 <tr>
-	                  <td class="col-md-1">1,001</td>
-	                  <td class="col-md-2">1,001</td>
-	                  <td class="col-md-3">1,001</td>
-	                </tr>
+	                {this.state.kudoList.map((item, i) => (
+                            <tr key={i}>
+                              <td className="col-md-1">{item.kudos_header}</td>
+                              <td className="col-md-1">{item.kudos_message}</td>
+                            </tr>
+                      ))}
 	              </tbody>
 	            </table>
 	          </div>
-	</div> 
-);
+			</div>
+		)
+	} 
+};
 export default Mykudos;

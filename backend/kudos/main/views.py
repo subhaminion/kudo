@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from main.dbapi import (
 	get_all_users, get_user,
 	get_all_kudos_by_user, get_kudos,
-	save_kudo
+	save_kudo, check_organization
 )
 
 from main.serializers import (
@@ -31,19 +31,30 @@ class LoginView(APIView):
 
 		if username is None or password is None:
 			return Response({
-				"error": "Please provide both username and password"
+				"msg": "Please provide both username and password"
 			}, status=HTTP_400_BAD_REQUEST)
 
 		user = authenticate(username=username, password=password)
 		if not user:
 			return Response({
-				"error": "Invalid Credentials"
+				"msg": "Invalid Credentials"
 			}, status=HTTP_404_NOT_FOUND)
 		
 		token, _ = Token.objects.get_or_create(user=user)
 		return Response({
 			"token": token.key
 		}, status=HTTP_200_OK)
+
+
+class MeView(viewsets.ViewSet):
+	serializer_class = UserSerializer
+	permission_classes = (IsAuthenticated, )
+	authentication_classes = (TokenAuthentication, )
+
+	def list(self, request):
+		queryset = get_user(request.user.id)
+		serializer = UserSerializer(queryset, many=True)
+		return Response(serializer.data)
 
 
 class UserView(viewsets.ViewSet):
@@ -66,10 +77,24 @@ class KudosView(viewsets.ViewSet):
 	permission_classes = (IsAuthenticated, )
 	authentication_classes = (TokenAuthentication, )
 
+	def list(self, request):
+		queryset = get_all_kudos_by_user(None, request.user)
+		serializer = KudosSerializer(queryset, many=True)
+		return Response(serializer.data)
+
 	def create(self, request):
+		print(request.user.orgranization)
+		print(request.data.get('to_user'))
+
+		if str(request.user.id) == str(request.data.get('to_user')):
+			return Response({'msg': "you cant give kudo to yourself -_-"}, status=HTTP_400_BAD_REQUEST)
+
+		if not check_organization(request.user.id, request.data.get('to_user')):
+			return Response({'msg': "Can't be given to people in other ORG."}, status=HTTP_200_OK)
+
 		queryset = save_kudo(request)
 		serializer = KudosSerializer(queryset)
-		return Response(serializer.data)
+		return Response({'msg': 'Successfully sent!'}, status=HTTP_200_OK)
 
 
 class UserKudosView(viewsets.ViewSet):

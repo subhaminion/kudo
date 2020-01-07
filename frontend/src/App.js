@@ -1,16 +1,24 @@
 import React from 'react';
 import './App.css';
-import Navbar from './Components/Navbar';
-import Mykudos from './Components/Mykudos';
-import Userlist from './Components/Userlist';
+import Login from './Components/Login';
+import Profile from './Components/Profile';
+import PrivateRouter from './Components/PrivetRouter';
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <Navbar />
-      <Mykudos />
-      <Userlist />
-
+    <Router>
+    	<Switch>
+	    	<Route path='/' exact component={Login} />
+	    	<PrivateRouter component={Profile} path="/profile" exact />
+		</Switch>
+    </ Router>
     </div>
   );
 }

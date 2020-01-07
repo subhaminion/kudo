@@ -4,11 +4,13 @@ from django.contrib import admin
 from rest_framework_nested import routers
 from main.views import (
 	LoginView, UserView,
-	KudosView, UserKudosView
+	KudosView, UserKudosView,
+	MeView
 )
 
 router = routers.SimpleRouter()
 router.register(r'user', UserView, basename="user")
+router.register(r'me', MeView, basename="me")
 router.register(r'kudo', KudosView, basename="kudo")
 
 user_kudos_router = routers.NestedSimpleRouter(router, r'user', lookup='user')
