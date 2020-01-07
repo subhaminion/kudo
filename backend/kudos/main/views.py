@@ -83,8 +83,8 @@ class KudosView(viewsets.ViewSet):
 		return Response(serializer.data)
 
 	def create(self, request):
-		print(request.user.orgranization)
-		print(request.data.get('to_user'))
+		if request.user.kudos_count < 1:
+			return Response({'msg': "you ran out of kudos to give :3"}, status=HTTP_400_BAD_REQUEST)
 
 		if str(request.user.id) == str(request.data.get('to_user')):
 			return Response({'msg': "you cant give kudo to yourself -_-"}, status=HTTP_400_BAD_REQUEST)

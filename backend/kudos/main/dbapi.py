@@ -19,7 +19,12 @@ def get_all_kudos_by_user(user_pk=None, user=None):
 		user = CustomUser.objects.get(pk=user.id)
 		return Kudos.objects.filter(to_user=user)
 
+def update_kudo_count(request):
+	request.user.kudos_count = request.user.kudos_count - 1
+	request.user.save()
+
 def save_kudo(request):
+	update_kudo_count(request)
 	usr = CustomUser.objects.get(pk=request.data.get('to_user'))
 	kudo = Kudos.objects.create(
 		kudos_header=request.data.get('kudos_header'),
@@ -36,3 +41,7 @@ def check_organization(request_user, to_sent_user):
 		return True
 
 	return False
+
+def reset_kudos_count_for_all_users():
+	queryset = CustomUser.objects.all()
+	queryset.update(kudos_count = 3)

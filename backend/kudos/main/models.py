@@ -25,14 +25,7 @@ class CustomUser(AbstractUser):
         return self.username
 
 class Kudos(models.Model):
-    # remove this shit
-    HEADER_CHOICES = (
-        ('Thank You', 'Thank You'),
-        ('Going Above and Beyond', 'Going Above and Beyond'),
-        ('Team Player', 'Team Player'),
-        ('Great Job!', 'Great Job!')
-    )
-    kudos_header = models.CharField(max_length=255, choices=HEADER_CHOICES, default='')
+    kudos_header = models.CharField(max_length=255, default='')
     kudos_message = models.CharField(max_length=255, default='')
     from_user = models.ForeignKey(CustomUser, related_name="kudos_from_user", null=True, blank=True, on_delete=models.CASCADE)
     to_user = models.ForeignKey(CustomUser, related_name="kudos_to_user", null=True, blank=True, on_delete=models.CASCADE)

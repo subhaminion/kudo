@@ -18,7 +18,6 @@ class Navbar extends React.Component {
          }
       }).then(response => response.json())
       .then(json => {
-          console.log(json)
           this.setState({
             username: json[0].username,
             orgranization: json[0].orgranization.name

@@ -156,5 +156,4 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata'
 
-
-# export DJANGO_SETTINGS_MODULE="settings"
+DAY_OF_THE_WEEK = 'sunday'
